@@ -320,14 +320,14 @@ public class ModelAshenArmor extends ModelBiped {
         bootL2.setRotationPoint(0.1F, 12.0F, 0.0F);
         bootL.addChild(bootL2);
         bootL2.cubeList.add(new ModelBox(bootL2, 48, 16, -2.0F, -3.0F, -3.0F, 4, 2, 1, 0.0F, true));
-    }
 
-    @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        if (entity instanceof EntityArmorStand) {
-            // Hack so helmets look right on armor stand
-            netHeadYaw = 0;
-        }
+        bipedHead.showModel = false;
+        bipedHeadwear.showModel = false;
+        bipedBody.showModel = false;
+        bipedLeftArm.showModel = false;
+        bipedRightArm.showModel = false;
+        bipedLeftLeg.showModel = false;
+        bipedRightLeg.showModel = false;
 
         head.showModel = slot == EntityEquipmentSlot.HEAD;
         chest.showModel = slot == EntityEquipmentSlot.CHEST;
@@ -338,8 +338,6 @@ public class ModelAshenArmor extends ModelBiped {
         legR.showModel = slot == EntityEquipmentSlot.LEGS;
         bootL.showModel = slot == EntityEquipmentSlot.FEET;
         bootR.showModel = slot == EntityEquipmentSlot.FEET;
-
-        bipedHeadwear.showModel = false;
 
         switch (slot) {
             case FEET:
@@ -360,9 +358,15 @@ public class ModelAshenArmor extends ModelBiped {
                 bipedHead = head;
                 break;
         }
+    }
 
+    @Override
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        if (entity instanceof EntityArmorStand) {
+            // Hack so helmets look right on armor stand
+            netHeadYaw = 0;
+        }
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale * 1.0f);
-
         renderCape(entity, scale);
     }
 
