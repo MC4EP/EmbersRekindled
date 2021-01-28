@@ -182,6 +182,25 @@ public class TileEntityRelay extends TileEntity implements ITileEntityBase, IEmb
 	}
 
 	@Override
+	public boolean isEmpty() {
+		polled = true;
+		if (target != null){
+			TileEntity tile = getWorld().getTileEntity(target);
+			if (tile instanceof TileEntityRelay){
+				if (((TileEntityRelay)tile).target != null && !((TileEntityRelay)tile).polled){
+					if (((TileEntityRelay)tile).target.compareTo(getPos()) != 0){
+						return ((IEmberPacketReceiver)tile).isEmpty();
+					}
+				}
+			}
+			else if (tile instanceof IEmberPacketReceiver) {
+				return ((IEmberPacketReceiver) tile).isEmpty();
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public boolean onReceive(EntityEmberPacket packet) {
 		if (target != null){
 			packet.dest = target;
