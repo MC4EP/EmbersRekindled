@@ -1,7 +1,9 @@
 package teamroots.embers.itemmod;
 
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -12,24 +14,34 @@ import teamroots.embers.api.itemmod.ModifierBase;
 public class ModifierEldritchInsignia extends ModifierBase {
 
 	public ModifierEldritchInsignia() {
-		super(EnumType.ARMOR,"eldritch_insignia",0.0,true);
+		super(EnumType.ARMOR,"eldritch_insignia", 0.0, true);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
 	@SubscribeEvent
-	public void onEntityTarget(LivingSetAttackTargetEvent event){
-		if (event.getTarget() instanceof EntityPlayer){
-			int level = ItemModUtil.getArmorModifierLevel((EntityPlayer) event.getTarget(), EmbersAPI.ELDRITCH_INSIGNIA);
-			if ((event.getEntityLiving().getLastDamageSource() == null 
-					|| event.getEntityLiving().getLastDamageSource() != null && event.getEntityLiving().getLastDamageSource().getTrueSource() == null
-					|| event.getEntityLiving().getLastDamageSource() != null && event.getEntityLiving().getLastDamageSource().getTrueSource() != null && event.getEntityLiving().getLastDamageSource().getTrueSource().getUniqueID().compareTo(event.getTarget().getUniqueID()) != 0
-					) 
-					&& event.getEntity().getEntityId() % (3+level) >= 2){
-				if (level > 0 && !(event.getEntityLiving() instanceof EntityPlayer)/* || event.getEntityLiving() instanceof EntityPlayer && ((EntityPlayer)event.getEntityLiving()).getGameProfile().getName().compareToIgnoreCase("yrsegal") == 0*/){
-					((EntityLiving)event.getEntityLiving()).setAttackTarget(null);
-					//EmberInventoryUtil.removeEmber((EntityPlayer)event.getTarget(), cost);
-				}
+	public void onEntityTarget(LivingSetAttackTargetEvent event) {
+		final EntityLivingBase target = event.getTarget();
+		if (!(target instanceof EntityPlayer))
+			return;
+		final int level = ItemModUtil.getArmorModifierLevel(target, EmbersAPI.ELDRITCH_INSIGNIA);
+		if (level <= 0)
+			return;
+		final EntityLivingBase entity = event.getEntityLiving();
+		if (entity instanceof EntityPlayer)
+			return;
+		Class NPCClass = null;
+		try {
+			NPCClass = Class.forName("noppes.npcs.entity.EntityNPCInterface", false, this.getClass().getClassLoader());
+		} catch (ClassNotFoundException | LinkageError ignored) {}
+		if (NPCClass != null && NPCClass.isInstance(entity))
+			return;
+		final DamageSource lastSource = entity.getLastDamageSource();
+		if ((lastSource == null
+				|| lastSource.getTrueSource() == null
+				|| lastSource.getTrueSource().getUniqueID().compareTo(target.getUniqueID()) != 0
+		) && entity.getEntityId() % (3 + level) >= 2) {
+				((EntityLiving) entity).setAttackTarget(null);
+				//EmberInventoryUtil.removeEmber((EntityPlayer)event.getTarget(), cost);
 			}
-		}
 	}
 }
