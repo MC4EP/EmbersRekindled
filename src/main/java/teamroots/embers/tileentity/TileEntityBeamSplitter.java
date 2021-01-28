@@ -120,8 +120,8 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 		if (ticksExisted % 20 == 0 && !getWorld().isRemote && this.capability.getEmber() > 0) {
 			TileEntity tileLeft = targetLeft != null ? getWorld().getTileEntity(targetLeft) : null;
 			TileEntity tileRight = targetRight != null ? getWorld().getTileEntity(targetRight) : null;
-			boolean sendLeft = (tileLeft instanceof IEmberPacketReceiver && !((IEmberPacketReceiver) tileLeft).isFull());
-			boolean sendRight = (tileRight instanceof IEmberPacketReceiver && !((IEmberPacketReceiver) tileRight).isFull());
+			boolean sendLeft = (tileLeft instanceof IEmberPacketReceiver && ((IEmberPacketReceiver) tileLeft).isEmpty());
+			boolean sendRight = (tileRight instanceof IEmberPacketReceiver && ((IEmberPacketReceiver) tileRight).isEmpty());
 			if (!sendLeft && !sendRight)
 				return;
 			double amount = this.capability.getEmber();
@@ -154,6 +154,11 @@ public class TileEntityBeamSplitter extends TileEntity implements ITileEntityBas
 	@Override
 	public boolean isFull() {
 		return capability.getEmber() >= capability.getEmberCapacity();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return capability.getEmber() <= 0;
 	}
 
 	@Override

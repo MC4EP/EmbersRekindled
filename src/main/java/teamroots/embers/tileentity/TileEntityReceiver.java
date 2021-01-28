@@ -133,6 +133,11 @@ public class TileEntityReceiver extends TileEntity implements ITileEntityBase, I
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return capability.getEmber() <= 0;
+	}
+
+	@Override
 	public boolean onReceive(EntityEmberPacket packet) {
 		return true;
 	}

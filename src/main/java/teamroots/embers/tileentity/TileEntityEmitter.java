@@ -170,7 +170,7 @@ public class TileEntityEmitter extends TileEntity implements ITileEntityBase, IT
 		if ((this.ticksExisted+offset) % 20 == 0 && !getWorld().isBlockPowered(getPos()) && target != null && !getWorld().isRemote && this.capability.getEmber() > PULL_RATE) {
 			TileEntity targetTile = getWorld().getTileEntity(target);
 			if (targetTile instanceof IEmberPacketReceiver){
-				if (!(((IEmberPacketReceiver) targetTile).isFull())){
+				if (((IEmberPacketReceiver) targetTile).isEmpty()) {
 					EntityEmberPacket packet = new EntityEmberPacket(getWorld());
 					Vec3d velocity = getBurstVelocity(facing);
 					packet.initCustom(getPos(), target, velocity.x, velocity.y, velocity.z, Math.min(TRANSFER_RATE,capability.getEmber()));
